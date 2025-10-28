@@ -79,7 +79,6 @@ class Bot:
             recv_data: dict = json.loads(self.websocket.recv())
             # 这里不负责异步，线程调度处理
             message = MessageHandler(**recv_data)
-            print(f"text:{message.textMessage}")
             for command in self.commands:
                 command.exec(message)
         return

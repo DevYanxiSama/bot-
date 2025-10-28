@@ -99,10 +99,9 @@ class MessageHandler:
 
     def __init__(self, self_id=0, user_id="0", time=0, message_id=0, message_seq=0, real_id=0, real_seq=0,
                  message_type="None",
-                 sender={'user_id': 0, 'nickname': 'PVP_yanxi', 'card': '', 'role': 'owner'}, raw_message="",
+                 sender={}, raw_message="",
                  font=14, sub_type="normal",
-                 message=[{'type': 'at', 'data': {'qq': '0'}},
-                          {'type': 'text', 'data': {'text': ''}}],
+                 message=[],
                  message_format='array', post_type='message', group_id=0, group_name="测试", target_id=0, **kwargs):
         self.target_id: int = target_id
         self.raw_message: str = raw_message
@@ -142,6 +141,8 @@ class MessageHandler:
         data = {"user_id": qq}
         try:
             result = requests.post(self.httpPath + "get_stranger_info", data=json.dumps(data)).json()
+            if result is None or result["status"] != "ok":
+                result = {'status': 'error', 'data': {"nickname": "获取失败"}}
         except requests.Timeout:
             error("账号信息获取失败：请求超时")
         except Exception as e:
@@ -185,7 +186,6 @@ class MessageHandler:
             messageType = "群聊"
 
         result = {'status': 'error'}
-        info(f"{data}")
         try:
             result = requests.post(self.httpPath + path, data=json.dumps(data)).json()
             # 这里还要对消息发送失败做一些处理
